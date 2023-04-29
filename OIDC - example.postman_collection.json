@@ -1,0 +1,235 @@
+{
+	"info": {
+		"_postman_id": "92b4974d-f2aa-4958-9de3-26dc060e2768",
+		"name": "OIDC - example",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5582839"
+	},
+	"item": [
+		{
+			"name": "Auth-Server",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"access_token is returned\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.access_token).to.exist;",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.globals.set(\"access_token\", jsonData.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "oidc",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "testsecret",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "testapis",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7056/connect/token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7056",
+					"path": [
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "secure-api-without-security",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"contract\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0].date).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkNGNDk2QUMxNkVGOEM0NENGM0I1NDhENzVDOTgwMDQxIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE2ODAzNTA2OTMsImV4cCI6MTY4MDM1NDI5MywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzA1NiIsImNsaWVudF9pZCI6InRhc2UiLCJqdGkiOiI1REVGNzUxODkzOUVCQjVCNUUwMzdDN0NBMkMyNERDQSIsImlhdCI6MTY4MDM1MDY5Mywic2NvcGUiOlsidGVzdGFwaXMiXX0.XIq72KfxLxJnIEdPHDdEjPakhLJ0gbQRBlAJ2HuHcAfIVZumDpXrcgFrm2nSkf9bYudOgbIcJjfLI9u45V7kZEO2167do2Ka6_2qh3VTBKkD2KdssAgUXrA6UY74VLegoz9M40KAHKizKgL6szCh0hqGDG9GzawJAqsOnsIhhEO7JmiaHF4ctYASzqMLZpcI2eq9J4B_WOryt_AvMbzP3W5vnX3ExnSXmm-Aob03h3dNcfzcwLzvni1jO9QBy4TrKnc_Z5A2MJG8-GFRZR8nh0d3Sh1PpOWeBgasYf9ZdqMOvUXOwJDJx1Atu2tgq9KOPhN2zXV21MvJB_7cNG2Asw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7122/WeatherForecast1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7122",
+					"path": [
+						"WeatherForecast1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "secure-api-with-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"contract\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0].date).to.exist;",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkNGNDk2QUMxNkVGOEM0NENGM0I1NDhENzVDOTgwMDQxIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE2ODAzNTA2OTMsImV4cCI6MTY4MDM1NDI5MywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzA1NiIsImNsaWVudF9pZCI6InRhc2UiLCJqdGkiOiI1REVGNzUxODkzOUVCQjVCNUUwMzdDN0NBMkMyNERDQSIsImlhdCI6MTY4MDM1MDY5Mywic2NvcGUiOlsidGVzdGFwaXMiXX0.XIq72KfxLxJnIEdPHDdEjPakhLJ0gbQRBlAJ2HuHcAfIVZumDpXrcgFrm2nSkf9bYudOgbIcJjfLI9u45V7kZEO2167do2Ka6_2qh3VTBKkD2KdssAgUXrA6UY74VLegoz9M40KAHKizKgL6szCh0hqGDG9GzawJAqsOnsIhhEO7JmiaHF4ctYASzqMLZpcI2eq9J4B_WOryt_AvMbzP3W5vnX3ExnSXmm-Aob03h3dNcfzcwLzvni1jO9QBy4TrKnc_Z5A2MJG8-GFRZR8nh0d3Sh1PpOWeBgasYf9ZdqMOvUXOwJDJx1Atu2tgq9KOPhN2zXV21MvJB_7cNG2Asw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7122/WeatherForecast2",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7122",
+					"path": [
+						"WeatherForecast2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "secure-api-with-wrong-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkNGNDk2QUMxNkVGOEM0NENGM0I1NDhENzVDOTgwMDQxIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE2ODAzNTA2OTMsImV4cCI6MTY4MDM1NDI5MywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzA1NiIsImNsaWVudF9pZCI6InRhc2UiLCJqdGkiOiI1REVGNzUxODkzOUVCQjVCNUUwMzdDN0NBMkMyNERDQSIsImlhdCI6MTY4MDM1MDY5Mywic2NvcGUiOlsidGVzdGFwaXMiXX0.XIq72KfxLxJnIEdPHDdEjPakhLJ0gbQRBlAJ2HuHcAfIVZumDpXrcgFrm2nSkf9bYudOgbIcJjfLI9u45V7kZEO2167do2Ka6_2qh3VTBKkD2KdssAgUXrA6UY74VLegoz9M40KAHKizKgL6szCh0hqGDG9GzawJAqsOnsIhhEO7JmiaHF4ctYASzqMLZpcI2eq9J4B_WOryt_AvMbzP3W5vnX3ExnSXmm-Aob03h3dNcfzcwLzvni1jO9QBy4TrKnc_Z5A2MJG8-GFRZR8nh0d3Sh1PpOWeBgasYf9ZdqMOvUXOwJDJx1Atu2tgq9KOPhN2zXV21MvJB_7cNG2Asw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7122/WeatherForecast2",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7122",
+					"path": [
+						"WeatherForecast2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
